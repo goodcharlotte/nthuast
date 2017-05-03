@@ -111,6 +111,7 @@ static int Abc_CommandCleanup                ( Abc_Frame_t * pAbc, int argc, cha
 static int Abc_CommandSweep                  ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandFastExtract            ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandFxch                   ( Abc_Frame_t * pAbc, int argc, char ** argv );
+static void Abc_CommandNodeMerge_105062566   ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandEliminate              ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandDisjoint               ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandSparsify               ( Abc_Frame_t * pAbc, int argc, char ** argv );
@@ -763,6 +764,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "Synthesis",    "fx",            Abc_CommandFastExtract,      1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "fxch",          Abc_CommandFxch,             1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "eliminate",     Abc_CommandEliminate,        1 );
+    Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062566", Abc_CommandNodeMerge_105062566,        1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "dsd",           Abc_CommandDisjoint,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "sparsify",      Abc_CommandSparsify,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "lutpack",       Abc_CommandLutpack,          1 );
@@ -4006,6 +4008,25 @@ usage:
     return 1;
 }
 
+void Abc_CommandNodeMerge_105062566( Abc_Frame_t * pAbc, int argc, char ** argv ){
+	extern int Abc_NtkFxPerform( Abc_Ntk_t * pNtk, int nNewNodesMax, int nLitCountMax, int fCanonDivs, int fVerbose, int fVeryVerbose );
+    Abc_Ntk_t * pNtk = Abc_FrameReadNtk(pAbc);
+	if ( pNtk == NULL )
+    {
+        Abc_Print( -1, "Empty network.\n" );
+        return ;
+    }
+	FILE *fptr;
+	char mystring [100];
+	fptr = fopen(argv[1], "r");
+    if (!fptr) {
+        printf("Error: No data\n");
+    }
+	else {
+		while (fgets(mystring, 50, fptr) != NULL) puts(mystring);	
+		fclose (fptr);
+	}
+}
 
 /**Function*************************************************************
 
