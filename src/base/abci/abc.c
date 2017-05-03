@@ -137,6 +137,7 @@ static int Abc_CommandRr                     ( Abc_Frame_t * pAbc, int argc, cha
 static int Abc_CommandCascade                ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandExtract                ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandVarMin                 ( Abc_Frame_t * pAbc, int argc, char ** argv );
+static int Abc_CommandNodeMerge_105065515    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add
 static int Abc_CommandFaultClasses           ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandExact                  ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandBmsStart               ( Abc_Frame_t * pAbc, int argc, char ** argv );
@@ -789,6 +790,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "Synthesis",    "varmin",        Abc_CommandVarMin,           0 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "faultclasses",  Abc_CommandFaultClasses,     0 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "exact",         Abc_CommandExact,            1 );
+    Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105065515",    Abc_CommandNodeMerge_105065515,        1 );//new add  
 
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_start",  Abc_CommandBmsStart,         0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_stop",   Abc_CommandBmsStop,          0 );
@@ -7253,6 +7255,57 @@ usage:
   SeeAlso     []
 
 ***********************************************************************/
+int Abc_CommandNodeMerge_105065515( Abc_Frame_t * pAbc, int argc, char ** argv )
+{
+  // stored network
+  Abc_Ntk_t * pNtk = Abc_FrameReadNtk(pAbc);
+  
+  // parameters
+  int c;
+  int mTwo = 0;
+  int mMax = 0;
+
+  Extra_UtilGetoptReset();
+  while ( ( c = Extra_UtilGetopt( argc, argv, "tmh" ) ) != EOF )
+  {
+    switch ( c )
+    {
+      case 't':
+        mTwo ^= 1;
+        break;
+      case 'm':
+        mMax ^= 1;
+        break;
+      case 'h':
+        goto usage;
+      default:
+        goto usage;
+    }
+  }
+
+
+  if ( pNtk == NULL )
+  {
+    Abc_Print( -1, "Empty network.\n" );
+    return 1;
+  }
+
+  if ( mTwo && mMax )
+    Abc_Print( -1, "Please choose merge mode.\n" );
+  else if ( mTwo )
+    Abc_Print( 1, "Ready for node merge. ( each 2 nodes )\n" );
+  else
+    Abc_Print( 1, "Ready for node merge. ( Max number of nodes)\n" );
+  return 0;
+
+usage:
+  Abc_Print( -2, "usage: node_merge [-tmh]\n");
+  Abc_Print( -2, "\t      optimization\n");
+  Abc_Print( -2, "\t-t  : optimize 2 nodes for once.\n" );
+  Abc_Print( -2, "\t-m  : optimize max number of nodes for once.\n" );
+  Abc_Print( -2, "\t-h  : print the command usage\n" );
+  return 0;
+}
 int Abc_CommandFaultClasses( Abc_Frame_t * pAbc, int argc, char ** argv )
 {
     extern void Abc_NtkDetectClassesTest( Abc_Ntk_t * pNtk, int fSeq, int fVerbose, int fVeryVerbose );
