@@ -140,6 +140,8 @@ static int Abc_CommandExtract                ( Abc_Frame_t * pAbc, int argc, cha
 static int Abc_CommandVarMin                 ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandNodeMerge_105065515    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add
 static int Abc_CommandNodeMerge_105062511    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add
+static int Abc_CommandNodeMerge_105062567    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062567
+
 
 
 
@@ -769,6 +771,8 @@ void Abc_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "Synthesis",    "fxch",          Abc_CommandFxch,             1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "eliminate",     Abc_CommandEliminate,        1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062566", Abc_CommandNodeMerge_105062566,        1 );
+		Cmd_CommandAdd( pAbc, "Syn thesis",    "node_merge_105062567",    Abc_CommandNodeMerge_105062567,        1 ); //NodeMerge 105062567/
+
     Cmd_CommandAdd( pAbc, "Synthesis",    "dsd",           Abc_CommandDisjoint,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "sparsify",      Abc_CommandSparsify,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "lutpack",       Abc_CommandLutpack,          1 );
@@ -7268,6 +7272,58 @@ usage:
     Abc_Print( -2, "\t-h       : print the command usage\n");
     return 1;
 }
+
+
+
+static int Abc_CommandNodeMerge_105062567( Abc_Frame_t * pAbc, int argc, char **argv )
+{
+
+int c;
+int fnode;
+Abc_Ntk_t * pNtk = Abc_FrameReadNtk(pAbc);
+
+
+Extra_UtilGetoptReset();
+
+ while ( ( c = Extra_UtilGetopt( argc, argv, "hn" ) ) != EOF )
+{
+	switch(c){
+	
+		case 'n':
+
+					fnode = 1;
+    	case 'h':
+					goto useage;
+
+		defalut :
+					goto useage;
+
+	}
+
+
+}
+
+if ( pNtk == NULL )
+{
+	Abc_Print( -1, "Empty network.\n" );
+ 	return 1;
+
+}
+else if(fnode){
+	Abc_Print(-1,"Node_merge successful.\n");
+	return 0;
+}
+
+
+else  return 0;
+
+useage:
+
+	Abc_Print( -2, "usage: node_mgerge  [-h]\n");
+	return 1;
+
+} 
+
 
 /**Function*************************************************************
 
