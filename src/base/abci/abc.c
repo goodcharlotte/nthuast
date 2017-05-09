@@ -141,7 +141,7 @@ static int Abc_CommandVarMin                 ( Abc_Frame_t * pAbc, int argc, cha
 static int Abc_CommandNodeMerge_105065515    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add
 static int Abc_CommandNodeMerge_105062511    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add
 static int Abc_CommandNodeMerge_105062567    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062567
-
+static int Abc_CommandNodeMerge_104062522    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 104062522
 
 
 
@@ -802,6 +802,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "Synthesis",    "exact",         Abc_CommandExact,            1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105065515",    Abc_CommandNodeMerge_105065515,        1 );//new add  
  	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062511",    Abc_CommandNodeMerge_105062511,        1 );//105062511
+    Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_104062522",    Abc_CommandNodeMerge_104062522,        1 );//104062522
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_start",  Abc_CommandBmsStart,         0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_stop",   Abc_CommandBmsStop,          0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_ps",     Abc_CommandBmsPs,            0 );
@@ -7336,6 +7337,57 @@ useage:
   SeeAlso     []
 
 ***********************************************************************/
+int Abc_CommandNodeMerge_104062522( Abc_Frame_t * pAbc, int argc, char ** argv )
+{
+    Abc_Ntk_t * pNtk = Abc_FrameReadNtk(pAbc);
+    int c;
+    int fFirst = 0;
+    int fSecond = 0;
+
+    // set defaults
+    Extra_UtilGetoptReset();
+    while ( ( c = Extra_UtilGetopt( argc, argv, "fsh" ) ) != EOF )
+    {
+        switch ( c )
+        {
+        case 'f':
+            fFirst ^= 1;
+            break;
+        case 's':
+            fSecond ^= 1;
+            break;
+        case 'h':
+            goto usage;
+        default:
+            goto usage;
+        }
+    }
+
+    if ( pNtk == NULL )
+    {
+        Abc_Print( -1, "Empty network.\n" );
+        return 1;
+    }
+    if ( !Abc_NtkIsLogic(pNtk) )
+    {
+        Abc_Print( -1, "The classical (SIS-like) sweep can only be performed on a logic network.\n" );
+        return 1;
+    }
+    // modify the current network
+    if ( fFirst )	;
+    else if (fSecond) ;
+	else ;
+    return 0;
+
+usage:
+    Abc_Print( -2, "usage: node_merging [-fsh]\n" );
+    Abc_Print( -2, "\t        merging nodes\n" );
+    Abc_Print( -2, "\t-f    : Compute MA for one level\n", fFirst? "yes": "no" );
+    Abc_Print( -2, "\t-s    : Compute MA for two level\n", fSecond? "yes": "no" );
+    Abc_Print( -2, "\t-h    : print the command usage\n");
+    return 1;
+}
+
 int Abc_CommandNodeMerge_105065515( Abc_Frame_t * pAbc, int argc, char ** argv )
 {
   // stored network
