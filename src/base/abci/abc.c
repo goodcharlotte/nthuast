@@ -144,7 +144,7 @@ static int Abc_CommandNodeMerge_105062567    ( Abc_Frame_t * pAbc, int argc, cha
 static int Abc_CommandNodeMerge_104062522    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 104062522
 static int Abc_CommandNodeMerge_105062618    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062618
 static int Abc_CommandNodeMerge_105062627    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062627
-
+static int Abc_CommandNodeMerge_105062600    ( Abc_Frame_t * pAbc, int argc, char ** argv ); // create by YC
 
 
 static int Abc_CommandFaultClasses           ( Abc_Frame_t * pAbc, int argc, char ** argv );
@@ -774,7 +774,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "Synthesis",    "eliminate",     Abc_CommandEliminate,        1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062566", Abc_CommandNodeMerge_105062566,        1 );
 		Cmd_CommandAdd( pAbc, "Syn thesis",    "node_merge_105062567",    Abc_CommandNodeMerge_105062567,        1 ); //NodeMerge 105062567/
-
+    Cmd_CommandAdd( pAbc, "Sunthesis",    "node_merge_105062600", Abc_CommandNodeMerge_105062600,        1); // create by YC
     Cmd_CommandAdd( pAbc, "Synthesis",    "dsd",           Abc_CommandDisjoint,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "sparsify",      Abc_CommandSparsify,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "lutpack",       Abc_CommandLutpack,          1 );
@@ -7026,6 +7026,125 @@ usage:
   SeeAlso     []
 
 ***********************************************************************/
+int Abc_CommandNodeMerge_105062600( Abc_Frame_t * pAbc, int argc, char ** argv )
+{
+    extern Abc_Ntk_t * Abc_NtkAddBuffs( Abc_Ntk_t * pNtk, int fDirect, int fReverse, int nImprove, int fVerbose );
+    Abc_Ntk_t * pNtk = Abc_FrameReadNtk(pAbc);
+    Abc_Ntk_t * pNtkRes;
+    int fDirect;
+    int fReverse;
+    int nImprove;
+    int c, fVerbose;
+	int rand_num;
+    fDirect  = 0;
+    fReverse = 0;
+    nImprove = 1000;
+    fVerbose = 0;
+    Extra_UtilGetoptReset();
+    while ( ( c = Extra_UtilGetopt( argc, argv, "Idrvhz" ) ) != EOF )
+    {
+        switch ( c )
+        {
+        case 'I':
+            if ( globalUtilOptind >= argc )
+            {
+                Abc_Print( -1, "Command line switch \"-I\" should be followed by a positive integer.\n" );
+                goto usage;
+            }
+            nImprove = atoi(argv[globalUtilOptind]);
+            globalUtilOptind++;
+            if ( nImprove < 0 )
+                goto usage;
+            break;
+        case 'd':
+            fDirect ^= 1;
+            break;
+        case 'r':
+            fReverse ^= 1;
+            break;
+        case 'v':
+            fVerbose ^= 1;
+            break;
+		case 'z':
+			rand_num = (rand() % 6);
+			switch(rand_num)
+			{
+				case 0:
+					Abc_Print( -2, "\tThe one who falls and gets up is so much stronger than the one who never fell.\n" );
+					break;
+				case 1:
+					Abc_Print( -2, "\tDifficult roads often lead to beautiful destination.\n" );
+					break;
+				case 2:
+					Abc_Print( -2, "\tDreams and dedication are a powerful combination.\n" );
+					break;
+				case 3:
+					Abc_Print( -2, "\tLet no man pull you low enough to hate him.\n" );
+					break;
+				case 4:
+					Abc_Print( -2, "\tEvery accomplishment starts with the decision to try.\n" );
+					break;
+				case 5:
+					Abc_Print( -2, "\tWhat lies behind you and what lies in front of you, pales in comparison to what lies innside of you.\n" );
+					break;
+				default:
+					case ' ':
+					Abc_Print( -2, "\tThe one who falls and gets up is so much stronger than the one who never fell.\n" );
+					break;
+			}
+				
+			break;
+        case 'h':
+            goto usage;
+        default:
+            goto usage;
+        }
+    }
+
+    if ( pNtk == NULL )
+    {
+        Abc_Print( -1, "Empty network.\n" );
+        return 1;
+    }
+    if ( !Abc_NtkIsLogic(pNtk) )
+    {
+        Abc_Print( -1, "This command can only be applied to a logic network.\n" );
+        return 1;
+    }
+
+    // modify the current network
+    pNtkRes = Abc_NtkAddBuffs( pNtk, fDirect, fReverse, nImprove, fVerbose );
+    if ( pNtkRes == NULL )
+    {
+        Abc_Print( -1, "The command has failed.\n" );
+        return 1;
+    }
+    // replace the current network
+    Abc_FrameReplaceCurrentNetwork( pAbc, pNtkRes );
+    return 0;
+
+usage:
+	
+    Abc_Print( -2, "usage: node_merge [-NSDLF <num>] [-scwvh]\n" );
+	Abc_Print( -2, "\t           merge node for optimization\n" );
+    Abc_Print( -2, "\t-I <num> : the number of refinement iterations [default = %d]\n", nImprove );
+    Abc_Print( -2, "\t-d       : toggle using only CI-to-CO levelized order [default = %s]\n", fDirect? "yes": "no" );
+    Abc_Print( -2, "\t-r       : toggle using only CO-to-C1 levelized order [default = %s]\n", fReverse? "yes": "no" );
+    Abc_Print( -2, "\t-v       : toggle printing optimization summary [default = %s]\n", fVerbose? "yes": "no" );
+	Abc_Print( -2, "\t-z       : prompt some inspriational quotes for user\n");
+    Abc_Print( -2, "\t-h       : print the command usage\n");
+/*	
+	Abc_Print( -2, "\t           adds buffers to create balanced CI/CO paths\n" );
+    Abc_Print( -2, "\t-I <num> : the number of refinement iterations [default = %d]\n", nImprove );
+    Abc_Print( -2, "\t-d       : toggle using only CI-to-CO levelized order [default = %s]\n", fDirect? "yes": "no" );
+    Abc_Print( -2, "\t-r       : toggle using only CO-to-C1 levelized order [default = %s]\n", fReverse? "yes": "no" );
+    Abc_Print( -2, "\t-v       : toggle printing optimization summary [default = %s]\n", fVerbose? "yes": "no" );
+    Abc_Print( -2, "\t-h       : print the command usage\n");
+*/
+    return 1;
+}
+
+
 int Abc_CommandCascade( Abc_Frame_t * pAbc, int argc, char ** argv )
 {
     Abc_Ntk_t * pNtk, * pNtkRes;
