@@ -143,6 +143,7 @@ static int Abc_CommandNodeMerge_105062511    ( Abc_Frame_t * pAbc, int argc, cha
 static int Abc_CommandNodeMerge_105062567    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062567
 static int Abc_CommandNodeMerge_104062522    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 104062522
 static int Abc_CommandNodeMerge_105062618    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062618
+static int Abc_CommandNodeMerge_105062627    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062627
 
 
 
@@ -805,6 +806,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
  	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062511",    Abc_CommandNodeMerge_105062511,        1 );//105062511
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_104062522",    Abc_CommandNodeMerge_104062522,        1 );//104062522
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062618",    Abc_CommandNodeMerge_105062618,        1 );//105062618
+	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062627",    Abc_CommandNodeMerge_105062627,        1 );//105062627
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_start",  Abc_CommandBmsStart,         0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_stop",   Abc_CommandBmsStop,          0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_ps",     Abc_CommandBmsPs,            0 );
@@ -7601,6 +7603,53 @@ usage:
 	Abc_Print( -2, "\t-h       : print the command usage\n");    
     return 1;
 }
+
+int Abc_CommandNodeMerge_105062627( Abc_Frame_t * pAbc, int argc, char ** argv )
+{
+	int nNodes = 2;
+	int printnode = 0;
+	int printout = 0;
+	int c;
+
+	while ( ( c = Extra_UtilGetopt( argc, argv, "Nwvh" ) ) != EOF )
+    {
+        switch ( c )
+        {
+        case 'N':
+            if ( globalUtilOptind >= argc )
+            {
+                Abc_Print( -1, "Command line switch \"-N\" should be followed by an integer.\n" );
+                goto usage;
+            }
+            nNodes = atoi(argv[globalUtilOptind]);
+            globalUtilOptind++;
+            if ( nNodes < 0 )
+                goto usage;
+            break;
+        case 'w':
+            printnode ^= 1;
+            break;
+        case 'v':
+            printout ^= 1;
+			Abc_Print( -2, "The nodes have already been merged!\n" );
+            break;
+        case 'h':
+            goto usage;
+        default:
+            goto usage;
+        }
+    }
+	
+usage:
+    Abc_Print( -2, "usage: node_merge [-N <num>] [-wvh]\n" );
+    Abc_Print( -2, "\t           merge two or more nodes\n" );
+    Abc_Print( -2, "\t-N <num> : the number of nodes need to be merged [default = %d]\n", nNodes );
+	Abc_Print( -2, "\t-w       : toggle printing detailed stats for each node [default = %s]\n", printnode? "yes": "no" );
+    Abc_Print( -2, "\t-v       : finish message printout [default = %s]\n", printout? "yes": "no" );
+    Abc_Print( -2, "\t-h       : print the command usage\n");
+    return 1;
+}
+
 //--
 /**Function*************************************************************
 
