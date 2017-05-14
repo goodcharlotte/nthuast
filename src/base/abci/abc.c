@@ -808,7 +808,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_104062522",    Abc_CommandNodeMerge_104062522,        1 );//104062522
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062618",    Abc_CommandNodeMerge_105062618,        1 );//105062618
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062627",    Abc_CommandNodeMerge_105062627,        1 );//105062627
-	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062901",    Abc_CommandNodeMerge_105062901,        1 );//105062627
+	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062901",    Abc_CommandNodeMerge_105062901,        1 );//105062901
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_start",  Abc_CommandBmsStart,         0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_stop",   Abc_CommandBmsStop,          0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_ps",     Abc_CommandBmsPs,            0 );
@@ -4023,17 +4023,6 @@ usage:
     return 1;
 }
 
-/**Function*************************************************************
-
-  Synopsis    []
-
-  Description []
-
-  SideEffects []
-
-  SeeAlso     []
-
-***********************************************************************/
 int Abc_CommandNodeMerge_105062901( Abc_Frame_t * pAbc, int argc, char ** argv )
 {
     //extern int Abc_NtkFxPerform( Abc_Ntk_t * pNtk, int nNewNodesMax, int nLitCountMax, int fCanonDivs, int fVerbose, int fVeryVerbose );
@@ -4194,7 +4183,7 @@ int Abc_CommandNodeMerge_105062901( Abc_Frame_t * pAbc, int argc, char ** argv )
     return 0;
 
 usage:
-    Abc_Print( -2, "usage: node_merge [-SDNWMP <num>] [-sdzcnxvwh] [-f <file>]\n");
+    Abc_Print( -2, "usage: node_merge_105062901 [-SDNWMP <num>] [-sdzcnxvwh] [-f <file>]\n");
     Abc_Print( -2, "\t           performs node merge on the current network\n");
     Abc_Print( -2, "\t-S <num> : max number of single-cube divisors to consider [default = %d]\n", p->nSingleMax );
     Abc_Print( -2, "\t-D <num> : max number of double-cube divisors to consider [default = %d]\n", p->nPairsMax );
