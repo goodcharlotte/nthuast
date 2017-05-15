@@ -144,6 +144,7 @@ static int Abc_CommandNodeMerge_105062567    ( Abc_Frame_t * pAbc, int argc, cha
 static int Abc_CommandNodeMerge_104062522    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 104062522
 static int Abc_CommandNodeMerge_105062618    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062618
 static int Abc_CommandNodeMerge_105062627    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062627
+static int Abc_CommandNodeMerge_105062610    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062610
 static int Abc_CommandNodeMerge_105062600    ( Abc_Frame_t * pAbc, int argc, char ** argv ); // created by YC
 static int Abc_CommandNodeMerge_105062901    ( Abc_Frame_t * pAbc, int argc, char ** argv ); // created by Slighten
 
@@ -807,6 +808,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
  	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062511",    Abc_CommandNodeMerge_105062511,        1 );//105062511
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_104062522",    Abc_CommandNodeMerge_104062522,        1 );//104062522
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062618",    Abc_CommandNodeMerge_105062618,        1 );//105062618
+	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062610",    Abc_CommandNodeMerge_105062610,        1 );//105062610
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062627",    Abc_CommandNodeMerge_105062627,        1 );//105062627
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062901",    Abc_CommandNodeMerge_105062901,        1 );//105062901
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_start",  Abc_CommandBmsStart,         0 );
@@ -7327,6 +7329,101 @@ usage:
     return 1;
 }
 
+int Abc_CommandNodeMerge_105062610( Abc_Frame_t * pAbc, int argc, char ** argv )
+{
+    extern Abc_Ntk_t * Abc_NtkAddBuffs( Abc_Ntk_t * pNtk, int fDirect, int fReverse, int nImprove, int fVerbose );
+    Abc_Ntk_t * pNtk = Abc_FrameReadNtk(pAbc);
+    Abc_Ntk_t * pNtkRes;
+    int fDirect;
+    int fReverse;
+    int nImprove;
+    int c, fVerbose;
+	int fcat;
+
+	fcat = 0;
+    fDirect  = 0;
+    fReverse = 0;
+    nImprove = 1000;
+    fVerbose = 0;
+    Extra_UtilGetoptReset();
+    while ( ( c = Extra_UtilGetopt( argc, argv, "Idrvhyz" ) ) != EOF )
+    {
+        switch ( c )
+        {
+        case 'I':
+            if ( globalUtilOptind >= argc )
+            {
+                Abc_Print( -1, "Command line switch \"-I\" should be followed by a positive integer.\n" );
+                goto usage;
+            }
+            nImprove = atoi(argv[globalUtilOptind]);
+            globalUtilOptind++;
+            if ( nImprove < 0 )
+                goto usage;
+            break;
+		case 'z':
+			Abc_Print( -2, "\n\　 　　　　　　　　∧_∧　 ∧_∧　∧_∧　 ∧_∧　∧_∧ 　∧_∧\n\
+　　　　　　　____（´･ω･)（´･ω･)（´･ω･)（´･ω･)（´･ω･)（´･ω･)\n\
+　　　　　 ／ ＼￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣ ＼\n\
+　　　　 .<＼※ ＼＿＿_＿＿＿___＿＿_＿＿＿___＿＿_＿＿＿______ヽ\n\
+　 　 　 　 ヽ＼ ※　※　※　※　※　※　※　※　※　※　※　※　※ ＼\n\
+　　　　　　　 ＼`ー─────────────────────ヽ\n");
+			break;
+		case 'y':
+			fcat ^= 1;
+			Abc_Print( -2, "\n　︵＿＿＿︵      \n／　　　　　＼ \n︴●　　　●　︴\n︴≡　﹏　≡　︴\n＼＿＿＿＿＿／\n");
+			break;
+        case 'd':
+            fDirect ^= 1;
+            break;
+        case 'r':
+            fReverse ^= 1;
+            break;
+        case 'v':
+            fVerbose ^= 1;
+            break;
+        case 'h':
+            goto usage;
+        default:
+            goto usage;
+        }
+    }
+
+    if ( pNtk == NULL )
+    {
+        Abc_Print( -1, "Empty network.\n" );
+        return 1;
+    }
+    if ( !Abc_NtkIsLogic(pNtk) )
+    {
+        Abc_Print( -1, "This command can only be applied to a logic network.\n" );
+        return 1;
+    }
+
+    // modify the current network
+    pNtkRes = Abc_NtkAddBuffs( pNtk, fDirect, fReverse, nImprove, fVerbose );
+    if ( pNtkRes == NULL )
+    {
+        Abc_Print( -1, "The command has failed.\n" );
+        return 1;
+    }
+    // replace the current network
+    Abc_FrameReplaceCurrentNetwork( pAbc, pNtkRes );
+    return 0;
+
+usage:
+    Abc_Print( -2, "usage: node_merge [-I num] [-drvh]\n" );
+    Abc_Print( -2, "\t           node merge to complete the hw1 \n" );
+    Abc_Print( -2, "\t-I <num> : the number of refinement iterations [default = %d]\n", nImprove );
+    Abc_Print( -2, "\t-d       : toggle using only CI-to-CO levelized order [default = %s]\n", fDirect? "yes": "no" );
+    Abc_Print( -2, "\t-r       : toggle using only CO-to-C1 levelized order [default = %s]\n", fReverse? "yes": "no" );
+    Abc_Print( -2, "\t-v       : toggle printing optimization summary [default = %s]\n", fVerbose? "yes": "no" );
+    Abc_Print( -2, "\t-h       : print the command usage\n");
+	Abc_Print( -2, "\t-y       : print a cute cat :D \n");
+	Abc_Print( -2, "\t-z       : print 6 cute cats\n");
+	
+    return 1;
+}
 
 int Abc_CommandCascade( Abc_Frame_t * pAbc, int argc, char ** argv )
 {
