@@ -775,9 +775,9 @@ void Abc_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "Synthesis",    "fxch",          Abc_CommandFxch,             1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "eliminate",     Abc_CommandEliminate,        1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062566", Abc_CommandNodeMerge_105062566,        1 );
-		Cmd_CommandAdd( pAbc, "Syn thesis",    "node_merge_105062567",    Abc_CommandNodeMerge_105062567,        1 ); //NodeMerge 105062567/
+	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062567", Abc_CommandNodeMerge_105062567,        1 ); //NodeMerge 105062567/
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062600", Abc_CommandNodeMerge_105062600,        1); // created by YC
-    Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_103062272", Abc_CommandNodeMerge_103062272,        1); // add by 103062272 
+    Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_103062272", Abc_CommandNodeMerge_103062272,        1); //add 103062272 
     Cmd_CommandAdd( pAbc, "Synthesis",    "dsd",           Abc_CommandDisjoint,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "sparsify",      Abc_CommandSparsify,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "lutpack",       Abc_CommandLutpack,          1 );
@@ -812,7 +812,6 @@ void Abc_Init( Abc_Frame_t * pAbc )
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062610",    Abc_CommandNodeMerge_105062610,        1 );//105062610
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062627",    Abc_CommandNodeMerge_105062627,        1 );//105062627
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062901",    Abc_CommandNodeMerge_105062901,        1 );//105062901
-	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_103062272",    Abc_CommandNodeMerge_103062272,        1 );//103062272
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_start",  Abc_CommandBmsStart,         0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_stop",   Abc_CommandBmsStop,          0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_ps",     Abc_CommandBmsPs,            0 );
@@ -43910,7 +43909,7 @@ usage:
     Abc_Print( -2, "\t-h       : print the command usage\n");
     return 1;
 }
-int Abc_CommandNodeMergei_103062272( Abc_Frame_t * pAbc, int argc, char ** argv )
+int Abc_CommandNodeMerge_103062272( Abc_Frame_t * pAbc, int argc, char ** argv )
 {
     extern int Abc_NtkFxPerform( Abc_Ntk_t * pNtk, int nNewNodesMax, int nLitCountMax, int fCanonDivs, int fVerbose, int fVeryVerbose );
     Abc_Ntk_t * pNtk = Abc_FrameReadNtk(pAbc);
