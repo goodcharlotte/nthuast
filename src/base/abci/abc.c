@@ -147,7 +147,7 @@ static int Abc_CommandNodeMerge_105062627    ( Abc_Frame_t * pAbc, int argc, cha
 static int Abc_CommandNodeMerge_105062610    ( Abc_Frame_t * pAbc, int argc, char ** argv ); //new add 105062610
 static int Abc_CommandNodeMerge_105062600    ( Abc_Frame_t * pAbc, int argc, char ** argv ); // created by YC
 static int Abc_CommandNodeMerge_105062901    ( Abc_Frame_t * pAbc, int argc, char ** argv ); // created by Slighten
-
+static int Abc_CommandNodeMerge_103062272    ( Abc_Frame_t * pAbc, int argc, char ** argv ); // add by 103062272 @2017 5/15 
 
 static int Abc_CommandFaultClasses           ( Abc_Frame_t * pAbc, int argc, char ** argv );
 static int Abc_CommandExact                  ( Abc_Frame_t * pAbc, int argc, char ** argv );
@@ -777,6 +777,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062566", Abc_CommandNodeMerge_105062566,        1 );
 		Cmd_CommandAdd( pAbc, "Syn thesis",    "node_merge_105062567",    Abc_CommandNodeMerge_105062567,        1 ); //NodeMerge 105062567/
     Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062600", Abc_CommandNodeMerge_105062600,        1); // created by YC
+    Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_103062272", Abc_CommandNodeMerge_103062272,        1); // add by 103062272 
     Cmd_CommandAdd( pAbc, "Synthesis",    "dsd",           Abc_CommandDisjoint,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "sparsify",      Abc_CommandSparsify,         1 );
     Cmd_CommandAdd( pAbc, "Synthesis",    "lutpack",       Abc_CommandLutpack,          1 );
@@ -811,6 +812,7 @@ void Abc_Init( Abc_Frame_t * pAbc )
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062610",    Abc_CommandNodeMerge_105062610,        1 );//105062610
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062627",    Abc_CommandNodeMerge_105062627,        1 );//105062627
 	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_105062901",    Abc_CommandNodeMerge_105062901,        1 );//105062901
+	Cmd_CommandAdd( pAbc, "Synthesis",    "node_merge_103062272",    Abc_CommandNodeMerge_103062272,        1 );//103062272
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_start",  Abc_CommandBmsStart,         0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_stop",   Abc_CommandBmsStop,          0 );
     Cmd_CommandAdd( pAbc, "Exact synthesis", "bms_ps",     Abc_CommandBmsPs,            0 );
@@ -43908,6 +43910,60 @@ usage:
     Abc_Print( -2, "\t-h       : print the command usage\n");
     return 1;
 }
+int Abc_CommandNodeMergei_103062272( Abc_Frame_t * pAbc, int argc, char ** argv )
+{
+    extern int Abc_NtkFxPerform( Abc_Ntk_t * pNtk, int nNewNodesMax, int nLitCountMax, int fCanonDivs, int fVerbose, int fVeryVerbose );
+    Abc_Ntk_t * pNtk = Abc_FrameReadNtk(pAbc);
+    Fxu_Data_t Params, * p = &Params;
+    int c, fNewAlgo = 1;
+    int nPairsLimit = 1000000000;
+    // set the defaults
+    Abc_NtkSetDefaultFxParams( p );
+    Extra_UtilGetoptReset();
+    while ( (c = Extra_UtilGetopt(argc, argv, "hASMD")) != EOF )
+    {
+        switch (c)
+        {
+            case 'S':
+                    if(argc == 4)
+                        printf("Answer is %d\n",atoi(argv[2])-atoi(argv[3]));
+                    else
+                        goto usage;
+                break;
+            case 'A':
+                    if(argc == 4)
+                        printf("Answer is %d\n",atoi(argv[2])+atoi(argv[3]));
+                    else
+                        goto usage;
+                break;
+            case 'M':
+                    if(argc == 4)
+                        printf("Answer is %d\n",atoi(argv[2])*atoi(argv[3]));
+                    else
+                        goto usage;
+                break;
+            case 'D':
+                    if(argc == 4)
+                        printf("Answer is %d\n",atoi(argv[2])/atoi(argv[3]));
+                    else
+                        goto usage;
+                break;
+            default:
+                goto usage;
+        }
+    }
+
+usage:
+    Abc_Print( -2, "usage: [-ADSM <num> <num>] [-h] \n");
+    Abc_Print( -2, "\t           performs unate fast extract on the current network\n");
+    Abc_Print( -2 ,"\t-A <num> <num> : calculate A+B!\n");
+    Abc_Print( -2 ,"\t-D <num> <num> : calculate A/B!\n");
+    Abc_Print( -2 ,"\t-S <num> <num> : calculate A-B!\n");
+    Abc_Print( -2 ,"\t-M <num> <num> : calculate A*B!\n");
+    Abc_Print( -2, "\t-h             : print the command usage\n");
+    return 1;
+}
+
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
 ////////////////////////////////////////////////////////////////////////
